@@ -195,4 +195,4 @@ git add embeddings.json && git commit -m "rebuild: add [project name] to KB"
 
 ---
 
-Built by [Solomon Adenuga](https://github.com/SolomonAdenuga)
+Built by [Solomon Adenuga](https://github.com/TheLogeek)
