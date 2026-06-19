@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.local
+__pycache__/
+*.pyc
+.vercel/
+.DS_Store
+
+# Keep embeddings.json (it's the pre-built index, intentionally committed)
+# But ignore any large model downloads
+*.bin
+*.safetensors
+sentence_transformers_cache/
