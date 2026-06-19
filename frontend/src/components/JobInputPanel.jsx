@@ -28,7 +28,7 @@ export default function JobInputPanel({ onGenerate, isGenerating }) {
       <div className="input-panel-footer">
         <div className="model-badge">
           <span className="model-dot" />
-          claude-sonnet-4-6
+          llama-3.1-8b-instant
         </div>
         <button
           className={`generate-btn ${isGenerating ? 'generate-btn--loading' : ''}`}
