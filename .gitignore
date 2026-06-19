@@ -6,7 +6,6 @@ __pycache__/
 *.pyc
 .vercel/
 .DS_Store
-.project.md
 
 # Keep embeddings.json (it's the pre-built index, intentionally committed)
 # But ignore any large model downloads
