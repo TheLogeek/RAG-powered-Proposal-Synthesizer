@@ -13,6 +13,8 @@ from http.server import BaseHTTPRequestHandler
 
 from groq import Groq
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'lib'))
 from rag import retrieve
 from prompts import SYSTEM_PROMPT, build_user_prompt
 

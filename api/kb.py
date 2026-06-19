@@ -3,6 +3,8 @@ GET /api/kb
 Returns list of knowledge base files with metadata for the KB Browser panel.
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'lib'))
 import json
 import os
 from http.server import BaseHTTPRequestHandler
