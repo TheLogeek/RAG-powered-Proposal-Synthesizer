@@ -513,3 +513,96 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
+
+/* ── Responsive / Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Topbar: hide subtitle, shrink padding */
+  .topbar {
+    padding: 0 14px;
+  }
+
+  .logo-sub {
+    display: none;
+  }
+
+  .topbar-link {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  /* Dashboard: single column, natural scroll instead of fixed viewport height */
+  .dashboard {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* KB browser: limit height so it doesn't eat the whole screen */
+  .kb-browser {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: 40vh;
+  }
+
+  /* Center column: no right border, let it be full width */
+  .center-col {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Input panel: give the textarea a sensible fixed height instead of flex-filling */
+  .input-panel {
+    min-height: 260px;
+  }
+
+  .jd-textarea {
+    min-height: 180px;
+  }
+
+  /* Input footer: stack button below model badge on very small screens */
+  .input-panel-footer {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .generate-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 18px;
+  }
+
+  /* Output panel */
+  .output-panel {
+    min-height: 300px;
+  }
+
+  .output-body {
+    overflow-y: visible; /* let page scroll naturally */
+  }
+
+  /* Sources bar: allow chips to wrap */
+  .sources-bar {
+    padding: 10px 12px;
+  }
+
+  /* Slightly larger tap targets for KB items */
+  .kb-item {
+    padding: 12px 14px;
+  }
+}
+
+/* ── Extra small (phones < 400px) ────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .logo-text {
+    font-size: 13px;
+  }
+
+  .topbar-link {
+    display: none; /* hide nav link on tiny screens to avoid overflow */
+  }
+
+  .output-empty {
+    padding: 16px;
+  }
+}
