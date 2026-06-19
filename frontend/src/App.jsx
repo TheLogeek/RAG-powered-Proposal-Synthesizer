@@ -94,7 +94,7 @@ export default function App() {
         <div className="topbar-left">
           <span className="logo-mark">⟡</span>
           <span className="logo-text">ProposalSynth</span>
-          <span className="logo-sub">RAG-powered · claude-sonnet-4-6</span>
+          <span className="logo-sub">RAG-powered · Groq-llama-3.1-8b-instant</span>
         </div>
         <div className="topbar-right">
           <a
