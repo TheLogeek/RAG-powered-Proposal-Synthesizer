@@ -1,12 +1,3 @@
-"""
-POST /api/generate
-Body: { job_description: str, query_embedding: float[] }
-
-Vercel Python serverless function.
-- Retrieves top-K portfolio chunks via cosine similarity
-- Streams a tailored proposal from Groq (llama-3.1-8b-instant) using SSE
-"""
-
 import json
 import os
 from http.server import BaseHTTPRequestHandler
@@ -38,6 +29,8 @@ class handler(BaseHTTPRequestHandler):
 
         job_description = payload.get("job_description", "").strip()
         query_embedding = payload.get("query_embedding", [])
+        excluded_sources = payload.get("excluded_sources")
+        user_embeddings = payload.get("user_embeddings")
 
         if not job_description:
             self._error(400, "job_description is required")
@@ -51,16 +44,19 @@ class handler(BaseHTTPRequestHandler):
             self._error(500, "GROQ_API_KEY not configured")
             return
 
-        # Retrieve relevant portfolio chunks
         try:
-            chunks = retrieve(query_embedding, top_k=4)
+            chunks = retrieve(
+                query_embedding,
+                top_k=4,
+                excluded_sources=excluded_sources,
+                user_embeddings=user_embeddings,
+            )
         except FileNotFoundError as e:
             self._error(500, str(e))
             return
 
         user_prompt = build_user_prompt(job_description, chunks)
 
-        # Stream Groq response via SSE
         self.send_response(200)
         self._set_cors()
         self.send_header("Content-Type", "text/event-stream")
@@ -70,7 +66,6 @@ class handler(BaseHTTPRequestHandler):
 
         client = Groq(api_key=api_key)
 
-        # Send retrieved sources as first SSE event so UI can display them
         sources_event = json.dumps([
             {"source": c["source"], "score": round(c["score"], 3)} for c in chunks
         ])
@@ -104,7 +99,7 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(line.encode())
             self.wfile.flush()
         except BrokenPipeError:
-            pass  # client disconnected
+            pass
 
     def _error(self, code: int, message: str):
         self.send_response(code)

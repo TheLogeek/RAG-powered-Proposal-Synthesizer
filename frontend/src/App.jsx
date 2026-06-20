@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import KBBrowser from './components/KBBrowser.jsx'
 import JobInputPanel from './components/JobInputPanel.jsx'
 import ProposalOutput from './components/ProposalOutput.jsx'
+import { embedQuery } from './embedQuery.js'
+import { getUserChunks, getDismissedSources } from './kbStorage.js'
 import './app.css'
 
 export default function App() {
   const [proposal, setProposal] = useState('')
-  const [status, setStatus] = useState('idle') // idle | embedding | streaming | done | error
+  const [status, setStatus] = useState('idle')
   const [sources, setSources] = useState([])
   const [error, setError] = useState(null)
 
@@ -18,7 +20,6 @@ export default function App() {
 
     let embedding
     try {
-      const { embedQuery } = await import('./embedQuery.js')
       embedding = await embedQuery(jobDescription)
     } catch (e) {
       setError('Failed to load embedding model: ' + e.message)
@@ -29,12 +30,26 @@ export default function App() {
     setStatus('streaming')
 
     try {
+      const userChunks = await getUserChunks()
+      const userEmbeddings = userChunks.map(c => ({
+        source: c.source,
+        chunk_id: c.chunk_id,
+        heading: c.heading,
+        text: c.text,
+        embedding: c.embedding,
+        title: c.title,
+      }))
+
+      const excludedSources = getDismissedSources()
+
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           job_description: jobDescription,
           query_embedding: embedding,
+          user_embeddings: userEmbeddings.length > 0 ? userEmbeddings : undefined,
+          excluded_sources: excludedSources.length > 0 ? excludedSources : undefined,
         }),
       })
 
@@ -53,7 +68,7 @@ export default function App() {
 
         buffer += decoder.decode(value, { stream: true })
         const lines = buffer.split('\n')
-        buffer = lines.pop() // keep incomplete line
+        buffer = lines.pop()
 
         for (const line of lines) {
           if (line.startsWith('event: sources')) continue
@@ -69,11 +84,9 @@ export default function App() {
             if (!raw) continue
             try {
               const parsed = JSON.parse(raw)
-              // sources event payload is an array
               if (Array.isArray(parsed)) {
                 setSources(parsed)
               } else if (typeof parsed === 'string') {
-                // token
                 setProposal(prev => prev + parsed)
               }
             } catch {

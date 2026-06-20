@@ -514,6 +514,127 @@ body {
   scrollbar-color: var(--border) transparent;
 }
 
+/* ── KB Dismiss / Restore Buttons ─────────────────────────────────────────── */
+.kb-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kb-dismiss-btn {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.12s, background 0.12s;
+}
+.kb-dismiss-btn:hover {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.kb-restore-btn {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.12s, background 0.12s;
+}
+.kb-restore-btn:hover {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.kb-item--dismissed {
+  opacity: 0.45;
+}
+.kb-item--dismissed:hover {
+  opacity: 0.7;
+}
+
+/* ── KB Section Labels ────────────────────────────────────────────────────── */
+.kb-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--text-2);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.kb-section-label:hover {
+  color: var(--text-1);
+}
+.kb-section-label--dismissed {
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+.kb-section-toggle {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* ── Upload Panel ─────────────────────────────────────────────────────────── */
+.upload-panel {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 12px;
+  border: 1px dashed var(--border-bright);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.upload-zone:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.upload-zone--busy {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.upload-icon {
+  font-size: 18px;
+  color: var(--text-2);
+  line-height: 1;
+}
+
+.upload-text {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-2);
+  text-align: center;
+}
+
+.upload-error {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #f87171;
+  text-align: center;
+}
+
 /* ── Responsive / Mobile ──────────────────────────────────────────────────── */
 @media (max-width: 768px) {
 

@@ -1,16 +1,8 @@
-"""
-RAG retrieval module.
-Loads pre-built embeddings from embeddings.json (committed to repo,
-built locally via scripts/build_index.py using sentence-transformers).
-At runtime on Vercel, only numpy is needed — no torch, no heavy models.
-"""
-
 import json
 import os
 import numpy as np
 from pathlib import Path
 
-# Resolve path relative to this file so it works both locally and on Vercel
 _BASE = Path(__file__).parent.parent
 _EMBEDDINGS_PATH = _BASE / "embeddings.json"
 
@@ -28,20 +20,42 @@ def _load_index():
 
 
 def cosine_similarity(query_vec: np.ndarray, matrix: np.ndarray) -> np.ndarray:
-    """Vectorised cosine similarity between a 1-D query and an N×D matrix."""
     q = query_vec / (np.linalg.norm(query_vec) + 1e-10)
     norms = np.linalg.norm(matrix, axis=1, keepdims=True) + 1e-10
     normed = matrix / norms
     return normed @ q
 
 
-def retrieve(query_embedding: list[float], top_k: int = 4) -> list[dict]:
-    """
-    Return the top_k most relevant chunks for a given query embedding.
-    Each result dict has: { source, chunk_id, text, score }
-    """
+def retrieve(
+    query_embedding: list[float],
+    top_k: int = 4,
+    excluded_sources: list[str] | None = None,
+    user_embeddings: list[dict] | None = None,
+) -> list[dict]:
     data, vectors = _load_index()
     q = np.array(query_embedding, dtype=np.float32)
+
+    if excluded_sources:
+        keep_mask = np.array([
+            entry["source"] not in excluded_sources for entry in data
+        ], dtype=bool)
+        data = [d for d, m in zip(data, keep_mask) if m]
+        vectors = vectors[keep_mask]
+
+    if user_embeddings:
+        for ue in user_embeddings:
+            data.append({
+                "source": ue["source"],
+                "chunk_id": ue["chunk_id"],
+                "heading": ue.get("heading", ""),
+                "text": ue["text"],
+            })
+        user_vecs = np.array([ue["embedding"] for ue in user_embeddings], dtype=np.float32)
+        vectors = np.vstack([vectors, user_vecs]) if vectors.size else user_vecs
+
+    if vectors.size == 0:
+        return []
+
     scores = cosine_similarity(q, vectors)
     top_indices = np.argsort(scores)[::-1][:top_k]
     results = []
